@@ -4,20 +4,20 @@
 
 // --- 1. DIMENSIONS (Measure your Stencil) ---
 // Total width of the letter area (mm)
-total_width = 200; 
+total_width = 175; 
 
 // Total height of the letter area (mm)
-total_height = 200;
+total_height = 130;
 
 // How thick should the diverter be? (Distance from LED to Faceplate)
 diverter_depth = 10;
 
 // --- 2. GRID LAYOUT (Count your Stencil) ---
 // How many letters per row?
-columns = 16;
+columns = 11;
 
 // How many rows of text?
-rows = 16;
+rows = 10;
 
 // --- 3. WALL SETTINGS ---
 // Thickness of the grid walls (mm)
