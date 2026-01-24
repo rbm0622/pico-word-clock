@@ -1,80 +1,65 @@
-// Word Clock Light Diverter
-// Uses existing stencil letters for perfect alignment
+// Light Diverter for Word Clock
+// Based on dimensions from word_clock_stencil.scad
 
-include <word_clock_stencil.scad>;
+// --- Original Dimensions from Source ---
+inch = 25.4;
 
-// ==============================
-// Parameters
-// ==============================
-wall_thickness = 1.2;     // Thickness of dividers (mm)
-wall_height    = 15;      // Height of light walls (mm)
-back_thickness = 2;       // Back plate thickness (mm)
-clearance      = 0.15;    // Print tolerance
+// Inner stencil size
+width = 18.15;  // 
+height = 13;    // 
 
-// ==============================
-// Derived values (from stencil)
-// ==============================
-inner_width  = width;
-inner_height = height;
+// Border size
+border = 2;     // [cite: 2]
 
-// ==============================
-// Main assembly
-// ==============================
+// Grid configuration
+cols = 11;      // 
+rows = 10;      // 
+
+// --- Diverter Specific Parameters ---
+
+// Height of the diverter (Z-axis depth)
+// Increase this to provide more distance between LEDs and the face
+diverter_height = 10; 
+
+// Thickness of the grid walls separating the lights
+// Since the original scale is very small (18mm width), 
+// we need very thin walls (0.2mm - 0.4mm) to leave room for light.
+wall_thickness = 0.4; 
+
+// --- Derived Calculations ---
+
+outer_width = width + border * 2;   // [cite: 2]
+outer_height = height + border * 2; // 
+
+cell_w = width / cols;  // 
+cell_h = height / rows; // [cite: 4]
+
+// --- Geometry ---
+
 difference() {
-    // Outer solid
-    cube([
-        inner_width,
-        inner_height,
-        wall_height + back_thickness
-    ]);
-
-    // Hollow interior
-    translate([
-        wall_thickness,
-        wall_thickness,
-        back_thickness
-    ])
-    cube([
-        inner_width  - 2 * wall_thickness,
-        inner_height - 2 * wall_thickness,
-        wall_height + 1
-    ]);
-
-    // Remove letter openings (reuse stencil exactly)
-    translate([0, 0, -1])
-        linear_extrude(height = back_thickness + 2)
-            projection(cut = true)
-                import("word_clock_stencil.scad");
-}
-
-// ==============================
-// Vertical grid walls (columns)
-// ==============================
-for (c = [1 : cols - 1]) {
-    translate([
-        c * cell_w - wall_thickness / 2,
-        0,
-        back_thickness
-    ])
-    cube([
-        wall_thickness,
-        inner_height,
-        wall_height
-    ]);
-}
-
-// ==============================
-// Horizontal grid walls (rows)
-// ==============================
-for (r = [1 : rows - 1]) {
-    translate([
-        0,
-        r * cell_h - wall_thickness / 2,
-        back_thickness
-    ])
-    cube([
-        inner_width,
-        wall_thickness,
-        wall_height
-    ]);
+    // 1. The main solid block
+    cube([outer_width, outer_height, diverter_height]);
+    
+    // 2. Subtract the light channels (holes)
+    for (r = [0:rows-1]) {
+        for (c = [0:cols-1]) {
+            translate([
+                // X: Start at border, move over columns, center in cell
+                border + c * cell_w + cell_w / 2,
+                
+                // Y: Start at border, account for inverse Y (top-down), center in cell
+                // Logic matches source file coordinate system 
+                border + height - (r * cell_h + cell_h / 2),
+                
+                // Z: Lower slightly to ensure clean cut through bottom
+                -1
+            ])
+            // Cut the square hole
+            cube([
+                cell_w - wall_thickness, // Width of hole
+                cell_h - wall_thickness, // Height of hole
+                diverter_height + 2      // Depth (plus padding for boolean diff)
+            ], center = true); // Center the hole on the calculated coordinates
+        }
+    }
 }
