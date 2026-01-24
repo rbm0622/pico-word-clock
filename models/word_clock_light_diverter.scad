@@ -1,66 +1,68 @@
-// Light Diverter for Word Clock
-// Based on dimensions from word_clock_stencil.scad
+// --- WORD CLOCK LIGHT DIVERTER GENERATOR ---
 
-// --- Original Dimensions from Source ---
-// inch = 25.4;
+// 1. DIMENSIONS
+// Measure your STL (or the bed size you printed it on)
+total_width = 200; 
+total_height = 200;
+diverter_height = 15; // How deep the light grid should be (Z-axis)
 
-// Inner stencil size
-width = 18.15;  // 
-width = 175;  // 
-height = 130;    // 
+// 2. GRID LAYOUT
+// Standard word clocks are often 11x10 or 16x16. Count your letters!
+columns = 11; 
+rows = 10;
 
-// Border size
-border = 20;     // [cite: 2]
+// 3. WALL SETTINGS
+wall_thickness = 2.0; // Thickness of the grid lines
+outer_wall = 2.0;     // Thickness of the outer frame
 
-// Grid configuration
-cols = 11;      // 
-rows = 10;      // 
+// 4. ALIGNMENT OFFSET
+// Use these to shift the grid to match your stencil exactly
+offset_x = 0;
+offset_y = 0;
 
-// --- Diverter Specific Parameters ---
+// 5. RENDER SETTINGS
+show_stencil = true; // Set to true to see your STL overlay (Ghosted)
 
-// Height of the diverter (Z-axis depth)
-// Increase this to provide more distance between LEDs and the face
-diverter_height = 10; 
+// --- CODE BELOW ---
 
-// Thickness of the grid walls separating the lights
-// Since the original scale is very small (18mm width), 
-// we need very thin walls (0.2mm - 0.4mm) to leave room for light.
-wall_thickness = 0.4; 
-
-// --- Derived Calculations ---
-
-outer_width = width + border * 2;   // [cite: 2]
-outer_height = height + border * 2; // 
-
-cell_w = width / cols;  // 
-cell_h = height / rows; // [cite: 4]
-
-// --- Geometry ---
-
-difference() {
-    // 1. The main solid block
-    cube([outer_width, outer_height, diverter_height]);
+module light_diverter() {
     
-    // 2. Subtract the light channels (holes)
-    for (r = [0:rows-1]) {
-        for (c = [0:cols-1]) {
-            translate([
-                // X: Start at border, move over columns, center in cell
-                border + c * cell_w + cell_w / 2,
+    // Calculate the size of the inner area where letters exist
+    inner_w = total_width - (2 * outer_wall);
+    inner_h = total_height - (2 * outer_wall);
+    
+    // Calculate size of individual light cells
+    // (Total inner space - total space taken by internal walls) / number of cells
+    cell_w = (inner_w - (wall_thickness * (columns - 1))) / columns;
+    cell_h = (inner_h - (wall_thickness * (rows - 1))) / rows;
+
+    difference() {
+        // The main solid block
+        translate([0, 0, diverter_height/2])
+        cube([total_width, total_height, diverter_height], center=false);
+
+        // Subtract the light chambers
+        for (r = [0 : rows - 1]) {
+            for (c = [0 : columns - 1]) {
                 
-                // Y: Start at border, account for inverse Y (top-down), center in cell
-                // Logic matches source file coordinate system 
-                border + height - (r * cell_h + cell_h / 2),
+                // Calculate position for specific cell
+                x_pos = outer_wall + (c * (cell_w + wall_thickness));
+                y_pos = outer_wall + (r * (cell_h + wall_thickness));
                 
-                // Z: Lower slightly to ensure clean cut through bottom
-                -1
-            ])
-            // Cut the square hole
-            cube([
-                cell_w - wall_thickness, // Width of hole
-                cell_h - wall_thickness, // Height of hole
-                diverter_height + 2      // Depth (plus padding for boolean diff)
-            ], center = true); // Center the hole on the calculated coordinates
+                translate([x_pos, y_pos, -1])
+                cube([cell_w, cell_h, diverter_height + 2]);
+            }
         }
     }
+}
+
+// Draw the Diverter
+color("black") 
+translate([offset_x, offset_y, 0])
+light_diverter();
+
+// Draw the Stencil for Alignment (Visual Reference Only)
+if (show_stencil) {
+    %translate([0, 0, diverter_height]) 
+    import("word_clock_stencil.stl");
 }
