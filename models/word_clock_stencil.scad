@@ -1,15 +1,16 @@
 // Word Clock Stencil with Border
 // Units: millimeters
 
-inch = 25.4;
+// inch = 25.4;
 
 // Inner stencil size (original)
-width = 18.15;
-height = 13;
-thickness = 2;
+// width = 18.15;
+width = 175;
+height = 130;
+thickness = 20;
 
 // Border size
-border = 2;
+border = 20;
 
 // Outer size
 outer_width = width + border * 2;

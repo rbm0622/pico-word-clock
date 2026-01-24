@@ -2,14 +2,15 @@
 // Based on dimensions from word_clock_stencil.scad
 
 // --- Original Dimensions from Source ---
-inch = 25.4;
+// inch = 25.4;
 
 // Inner stencil size
 width = 18.15;  // 
-height = 13;    // 
+width = 175;  // 
+height = 130;    // 
 
 // Border size
-border = 2;     // [cite: 2]
+border = 20;     // [cite: 2]
 
 // Grid configuration
 cols = 11;      // 
