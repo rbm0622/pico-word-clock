@@ -1,7 +1,7 @@
 include <word_clock_stencil.scad>;
 
 translate([0, 0, 10]) {
-    include <word_clock_light_diverter.scad>;
+    include <word_clock_light_diverter_channel.scad>;
 }
 
  translate([0, 0, 50]) {
