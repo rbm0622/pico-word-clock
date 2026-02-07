@@ -23,7 +23,7 @@ outer_height = height + border_tb * 2; // [cite: 4]
 cell_w = width / cols;                 // 
 cell_h = height / rows;                // 
 
-union() {
+difference() {
     // 1. Outer Frame with Integrated Mounting Lip
     difference() {
         // Main outer wall
@@ -73,5 +73,21 @@ union() {
         // Top rib
         translate([x_pos - rib_thickness/2, outer_height - border_tb, 0])
             cube([rib_thickness, border_tb - edge_thickness, baffle_height]);
+    }
+    // Corner screw holes
+    // Parameters: clearance for M3 screw (adjust if needed)
+    screw_hole_dia = 3.2;
+    screw_hole_r = screw_hole_dia / 2;
+    // Distance from outer edges inward to locate holes
+    mount_offset = 8;
+
+    for (p = [
+            [mount_offset, mount_offset],
+            [outer_width - mount_offset, mount_offset],
+            [mount_offset, outer_height - mount_offset],
+            [outer_width - mount_offset, outer_height - mount_offset]
+        ]) {
+        translate([p[0], p[1], -1])
+            cylinder(h = baffle_height + 2, r = screw_hole_r, $fn = 40);
     }
 }
