@@ -6,7 +6,6 @@ from clock_logic import time_to_words
 from display import clear, light_word, show
 
 import wifi_utils
-import spell_word
 # from machine import Pin
 
 def setTime():
@@ -27,7 +26,6 @@ setTime()
 def show_time(hour, minute):
     clear()
     for word in time_to_words(hour, minute):
-        # time_to_words returns keys matching WORDS
         light_word(WORDS[word])
     show()
 
@@ -36,31 +34,15 @@ def show_time(hour, minute):
 # -----------------------
 # Demo loop (replace with RTC later)
 # -----------------------
-last_minute = -1
 while True:
     now = utime.localtime()
     hour = now[3]
     minute = now[4]
-    second = now[5]
-#    hour = 5
-#    minute = 0
-#    second = 0
-
-    # Detect minute change; when minute rolls to 0, spell MENDELSOHN first
-    if minute != last_minute:
-        if minute == 0:
-            # Spell the word at the top of the hour (adjust colors/durations as needed)
-            try:
-                spell_word.main(['--word', 'MENDELSOHN', '--mode', 'individual', '--color', '0,0,255', '--cumulative', '--letter-delay', '0.25', '--final-hold', '3'])
-            except Exception as e:
-                print('Error running spell_word:', e)
-
-        last_minute = minute
+    hour = 8
+    minute = 15
 
     show_time(hour, minute)
     print(f"Time: {now}")
-    print(f"Hour:  {hour}")
-    print(f"Minute:  {minute}")
-
-    # Sleep a short time to keep responsive to minute changes
-    utime.sleep(5)
+    print (f"Hour:  {hour}") 
+    print (f"Minute:  {minute}") 
+    utime.sleep(30)
