@@ -1,4 +1,4 @@
-// Word Clock Baffle with Ribs and Mounting Lip
+// RBM Word Clock Baffle with Ribs and Mounting Lip
 // Based on word_clock_stencil.scad dimensions
 
 // --- Dimensions from Stencil Source ---
