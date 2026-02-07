@@ -1,3 +1,9 @@
 include <word_clock_stencil.scad>;
-include <word_clock_light_diverter.scad>;
-include <word_clock_back_panel.scad>;
+
+translate([0, 0, 10]) {
+    include <word_clock_light_diverter.scad>;
+}
+
+ translate([0, 0, 50]) {
+            include <word_clock_back_panel.scad>;
+     }
